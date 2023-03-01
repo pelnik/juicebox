@@ -6,20 +6,20 @@ async function createInitialUsers() {
     const albert = await createUser({
       username: "albert",
       password: "bertie99",
-      name: 'Albert',
-      location: 'New Orleans',
+      name: "Albert",
+      location: "New Orleans",
     });
     const sandra = await createUser({
       username: "sandra",
       password: "2sandy4me",
-      name: 'Sandra',
-      location: 'NYC',
+      name: "Sandra",
+      location: "NYC",
     });
     const glamgal = await createUser({
       username: "glamgal",
       password: "soglam",
-      name: 'Chelsea',
-      location: 'LA',
+      name: "Chelsea",
+      location: "LA",
     });
     console.log(albert);
     console.log("Finished creating users!");
@@ -34,6 +34,7 @@ async function dropTables() {
     console.log("Starting to drop tables...");
 
     await client.query(`
+     DROP TABLE IF EXISTS posts;
       DROP TABLE IF EXISTS users;
     `);
 
@@ -59,6 +60,15 @@ async function createTables() {
       );
     `);
 
+    await client.query(`
+    CREATE TABLE posts (
+      id SERIAL PRIMARY KEY,
+      "authorId" INTEGER REFERENCES users(id) NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      content TEXT NOT NULL,
+      active BOOLEAN DEFAULT true
+    );
+  `);
     console.log("Finished building tables!");
   } catch (error) {
     console.error("Error building tables!");
@@ -82,17 +92,16 @@ async function testDB() {
   try {
     console.log("Starting to test database...");
 
-    console.log("Calling getAllUsers")
+    console.log("Calling getAllUsers");
     const users = await getAllUsers();
     console.log("Result:", users);
 
-    console.log("Calling updateUser on users[0]")
+    console.log("Calling updateUser on users[0]");
     const updateUserResult = await updateUser(users[0].id, {
       name: "Newname Sogood",
       location: "Lesterville, KY",
-    })
+    });
     console.log("Result:", updateUserResult);
-
 
     console.log("Finished database tests!");
   } catch (error) {
