@@ -11,6 +11,7 @@ const {
   createTags,
   createPostTag,
   addTagsToPost,
+  getPostsByTagName
 } = require("./index");
 
 async function createInitialUsers() {
@@ -212,6 +213,10 @@ async function testDB() {
       tags: ["#youcandoanything", "#redfish", "#bluefish"],
     });
     console.log("result:", updatePostTagsResult);
+
+    console.log("Calling getPostsByTagName with #happy");
+    const postsWithHappy = await getPostsByTagName("#happy");
+    console.log("Result:", postsWithHappy);
 
     console.log("Finished database tests!");
   } catch (error) {
