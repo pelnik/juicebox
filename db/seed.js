@@ -144,7 +144,6 @@ async function testDB() {
     console.log("Result:", updateUserResult);
 
     console.log('Calling getAllPosts');
-    console.log('getallposts', await getAllPosts());
     const posts = await getAllPosts();
     console.log('Result: posts');
 
