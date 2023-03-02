@@ -185,7 +185,7 @@ async function testDB() {
 
     console.log("Calling getAllPosts");
     const posts = await getAllPosts();
-    console.log("Result: posts");
+    console.log("Result:", posts);
 
     console.log("Calling updatePost on posts[0]");
     const updatePostResult = await updatePost(posts[0].id, {

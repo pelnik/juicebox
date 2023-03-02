@@ -108,23 +108,37 @@ async function updatePost(id, fields = {}) {
 }
 
 async function getAllPosts() {
-  const { rows } = await client.query(
-    `SELECT id, "authorId", title, content, active
-    FROM posts;
-  `
-  );
+  try {
+    const { rows: postIds } = await client.query(
+      `SELECT id
+      FROM posts;
+    `);
+  
+    const posts = await Promise.all(postIds.map(
+      post => getPostById( post.id )
+    ))
+  
+    return posts;
+  } catch (error) {
+    throw error;
+  }
 
-  return rows;
+
 }
 
 async function getPostsByUser(userId) {
   try {
-    const { rows } = await client.query(`
-      SELECT * FROM posts
+    const { rows: postIds } = await client.query(`
+      SELECT id
+      FROM posts
       WHERE "authorId"=${userId};
     `);
 
-    return rows;
+    const posts = await Promise.all(postIds.map(
+      post => getPostById(post.id)
+    ));
+
+    return posts;
   } catch (error) {
     throw error;
   }
