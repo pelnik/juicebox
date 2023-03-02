@@ -3,12 +3,14 @@ const {
   getAllUsers,
   createUser,
   updateUser,
-  getUserById,
   createPost,
-  getAllPosts,
   updatePost,
-  addTagsToPost,
+  getAllPosts,
+  getPostsByUser,
+  getUserById,
   createTags,
+  createPostTag,
+  addTagsToPost,
 } = require("./index");
 
 async function createInitialUsers() {
@@ -107,25 +109,32 @@ async function createInitialPosts() {
   try {
     const [albert, sandra, glamgal] = await getAllUsers();
 
+    console.log("Starting to create posts...");
     await createPost({
       authorId: albert.id,
       title: "First Post",
       content:
         "This is my first post. I hope I love writing blogs as much as I love writing them.",
+      tags: ["#happy", "#youcandoanything"]
     });
 
     await createPost({
       authorId: sandra.id,
       title: "Second Post",
       content: "Hey there. I love dogs and kittens.",
+      tags: ["#happy", "#worst-day-ever"],
     });
 
     await createPost({
       authorId: glamgal.id,
       title: "Third Post",
       content: "Hi. I love makeup!!",
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
     });
+
+    console.log("Finished creating posts!");
   } catch (error) {
+    console.log("Error creating posts!");
     throw error;
   }
 }
@@ -138,7 +147,6 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialPosts();
-    await createInitialTags();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
@@ -157,6 +165,7 @@ async function createInitialTags() {
     ]);
 
     const [postOne, postTwo, postThree] = await getAllPosts();
+
     await addTagsToPost(postOne.id, [happy, inspo]);
     await addTagsToPost(postTwo.id, [sad, inspo]);
     await addTagsToPost(postThree.id, [happy, catman, inspo]);
