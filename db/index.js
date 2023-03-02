@@ -154,8 +154,8 @@ async function getUserById(userId) {
   }
 }
 
-async function createTags(tagsList) {
-  if (tagsList.length === 0) {
+async function createTags(tagList) {
+  if (tagList.length === 0) {
     return;
   }
   const insertValues = tagList.map((e, index) => `$${index + 1}`).join("), (");
@@ -165,17 +165,17 @@ async function createTags(tagsList) {
     await client.query(
       `
       INSERT INTO tags( name)
-      VALUES(${insertValues()})
+      VALUES(${insertValues})
       ON CONFLICT (name) DO NOTHING
     `,
-      [tagList]
+      tagList
     );
 
     const { rows } = await client.query(
       `SELECT * FROM tags
       WHERE name 
-      in (${selectValues()})`,
-      [tagList]
+      in (${selectValues})`,
+      tagList
     );
     return rows;
   } catch (error) {
@@ -187,9 +187,9 @@ async function createPostTag(postId, tagId) {
   try {
     await client.query(
       `
-    INSERT INTO post_tags("postId, "tagId)
-    VALUE ($1, $2)
-    ON CONFLICT ("postId, "tagId) DO NOTHING`,
+    INSERT INTO post_tags("postId", "tagId")
+    VALUES ($1, $2)
+    ON CONFLICT ("postId", "tagId") DO NOTHING`,
       [postId, tagId]
     );
   } catch (error) {
@@ -206,6 +206,47 @@ async function addTagsToPost(postId, tagList) {
     await Promise.all(createPostTagPromises);
 
     return await getPostById(postId);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getPostById(postId) {
+  try {
+    const {
+      rows: [post],
+    } = await client.query(
+      `
+    SELECT *
+    FROM posts
+    where id = $1;`,
+      [postId]
+    );
+
+    const { rows: tags } = await client.query(
+      `
+    SELECT tags.*
+    FROM tags
+    JOIN post_tags ON tags.id = post_tags."tagId"
+    where post_tags."postId" = $1;`,
+      [postId]
+    );
+
+    const {
+      rows: [author],
+    } = await client.query(
+      `
+    SELECT id, username, name, location
+    FROM users
+    where id = $1;`,
+      [post.authorId]
+    );
+    post.tag = tags;
+    post.author = author;
+
+    delete post.authorId;
+
+    return post;
   } catch (error) {
     throw error;
   }
