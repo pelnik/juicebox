@@ -43,6 +43,8 @@ async function dropTables() {
     console.log("Starting to drop tables...");
 
     await client.query(`
+     DROP TABLE IF EXISTS post_tags;
+     DROP TABLE IF EXISTS tags;
      DROP TABLE IF EXISTS posts;
       DROP TABLE IF EXISTS users;
     `);
@@ -78,6 +80,20 @@ async function createTables() {
       active BOOLEAN DEFAULT true
     );
   `);
+
+    await client.query(`
+   CREATE TABLE tags(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+   )`);
+
+    await client.query(`
+   CREATE TABLE post_tags(
+    "postId" INTEGER REFERENCES posts(id),
+    "tagId" INTEGER REFERENCES tags(id),
+    UNIQUE("postId", "tagId")
+    )`);
+
     console.log("Finished building tables!");
   } catch (error) {
     console.error("Error building tables!");
@@ -99,17 +115,14 @@ async function createInitialPosts() {
     await createPost({
       authorId: sandra.id,
       title: "Second Post",
-      content:
-        "Hey there. I love dogs and kittens.",
+      content: "Hey there. I love dogs and kittens.",
     });
 
     await createPost({
       authorId: glamgal.id,
       title: "Third Post",
-      content:
-        "Hi. I love makeup!!",
+      content: "Hi. I love makeup!!",
     });
-
   } catch (error) {
     throw error;
   }
@@ -143,14 +156,14 @@ async function testDB() {
     });
     console.log("Result:", updateUserResult);
 
-    console.log('Calling getAllPosts');
+    console.log("Calling getAllPosts");
     const posts = await getAllPosts();
-    console.log('Result: posts');
+    console.log("Result: posts");
 
     console.log("Calling updatePost on posts[0]");
     const updatePostResult = await updatePost(posts[0].id, {
       title: "New Title",
-      content: "Updated Content"
+      content: "Updated Content",
     });
     console.log("Result:", updatePostResult);
 
