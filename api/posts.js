@@ -1,7 +1,6 @@
-const express = require('express');
+const express = require("express");
 const postRouter = express.Router();
-const { getAllPosts } = require('../db');
-
+const { getAllPosts } = require("../db");
 
 postRouter.use((req, res, next) => {
   console.log("A request is being made to /posts");
@@ -9,17 +8,15 @@ postRouter.use((req, res, next) => {
   next();
 });
 
-postRouter.get('/', async (req, res, next) => {
+postRouter.get("/", async (req, res, next) => {
   try {
     const posts = await getAllPosts();
+    res.send({
+      posts,
+    });
   } catch (error) {
-    console.error('Error on get all posts', error)
+    console.error("Error on get all posts", error);
   }
-
-
-  res.send({
-    posts,
-  });
 });
 
 module.exports = postRouter;
