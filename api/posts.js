@@ -18,15 +18,13 @@ postRouter.post("/", requireUser, async (req, res, next) => {
 
     const post = await createPost(postData);
     if (post) {
-      restart.send({ post });
+      res.send({ post });
     } else {
       next(error);
     }
   } catch ({ name, message }) {
     next({ name, message });
   }
-
-  res.send({ message: "under construction" });
 });
 
 postRouter.use((req, res, next) => {
