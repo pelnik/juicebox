@@ -1,7 +1,10 @@
 const PORT = 3000;
-const express = require('express');
-const server = express();
+const express = require("express");
+const apiRouter = require("./api");
+const app = express();
 
-server.listen(PORT, () => {
-  console.log('the server is up on port', PORT);
-})
+app.use("/api", apiRouter);
+
+app.listen(PORT, () => {
+  console.log("the server is up on port", PORT);
+});
