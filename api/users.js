@@ -32,7 +32,7 @@ usersRouter.post("/login", async (req, res, next) => {
     if (user && user.password == password) {
       const token = jwt.sign(
         {
-          user: user.id,
+          id: user.id,
           username: username,
         },
         process.env.JWT_SECRET
