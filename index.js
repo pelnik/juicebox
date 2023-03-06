@@ -10,6 +10,10 @@ const { client } = require('./db');
 
 app.use(morgan('dev'));
 app.use(express.json());
+
+const cors = require('cors');
+app.use(cors());
+
 app.use("/api", apiRouter);
 
 client.connect();
