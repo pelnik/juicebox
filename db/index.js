@@ -1,6 +1,6 @@
 const { Client } = require("pg");
 const { DATABASE_URL } = process.env;
-const client = new Client(DATABASE_URL + "?ssl=true");
+const client = new Client(DATABASE_URL);
 
 async function getAllUsers() {
   const { rows } = await client.query(
