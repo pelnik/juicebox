@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const {PORT = 3000} = 80;
+const {PORT = 3000} = process.env;
 const express = require("express");
 const apiRouter = require("./api");
 const app = express();
