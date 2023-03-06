@@ -42,7 +42,7 @@ postRouter.get("/", async (req, res, next) => {
         return true;
       }
 
-      if (req.user && post.authorId === req.user.id) {
+      if (req.user && post.author.id === req.user.id) {
         return true;
       }
       return false;
