@@ -14,7 +14,7 @@ tagsRouter.get("/:tagName/posts", async (req, res, next) => {
     const allPosts = await getPostsByTagName(tagName);
 
     const posts = allPosts.filter((post) => {
-      if (post.active) {
+      if (post.active && post.author.active) {
         return true;
       }
 

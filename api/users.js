@@ -96,7 +96,7 @@ usersRouter.post('/register', async (req, res, next) => {
   }
 });
 
-usersRouter.delete('/:userId', async (req, res, next) => {
+usersRouter.delete('/:userId', requireUser, requireActiveUser, async (req, res, next) => {
   const { userId } =req.params;
 
 
