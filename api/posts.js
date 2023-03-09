@@ -24,6 +24,12 @@ postRouter.post('/', requireUser, requireActiveUser, async (req, res, next) => {
 
     const post = await createPost(postData);
     if (post) {
+      post.isAuthor = false;
+
+      if (req.user && req.user.id === post.author.id) {
+        post.isAuthor = true;
+      }
+
       res.send({ post });
     } else {
       next(error);
@@ -90,6 +96,13 @@ postRouter.patch(
 
       if (originalPost.id === req.user.id) {
         const updatedPost = await updatePost(postId, updateFields);
+
+        updatedPost.isAuthor = false;
+
+        if (req.user && req.user.id === updatedPost.author.id) {
+          updatedPost.isAuthor = true;
+        }
+
         res.send({ post: updatedPost });
       } else {
         next({
