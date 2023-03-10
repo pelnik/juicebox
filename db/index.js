@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { Client } = require("pg");
+const { Client } = require('pg');
 const { DATABASE_URL } = process.env;
 console.log(DATABASE_URL, 'DATABASE_URL');
 const client = new Client(DATABASE_URL);
@@ -37,10 +37,10 @@ async function createUser({ username, password, name, location }) {
 }
 
 async function updateUser(id, fields = {}) {
-  console.log("fields", fields);
+  console.log('fields', fields);
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", ");
+    .join(', ');
 
   if (setString.length === 0) {
     return;
@@ -92,7 +92,7 @@ async function updatePost(postId, fields = {}) {
 
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", ");
+    .join(', ');
 
   try {
     if (setString.length > 0) {
@@ -112,7 +112,7 @@ async function updatePost(postId, fields = {}) {
     }
 
     const tagList = await createTags(tags);
-    const tagListIdString = tagList.map((tag) => `${tag.id}`).join(", ");
+    const tagListIdString = tagList.map((tag) => `${tag.id}`).join(', ');
 
     await client.query(
       `
@@ -207,8 +207,8 @@ async function createTags(tagList) {
   if (tagList.length === 0) {
     return;
   }
-  const insertValues = tagList.map((e, index) => `$${index + 1}`).join("), (");
-  const selectValues = tagList.map((e, index) => `$${index + 1}`).join(", ");
+  const insertValues = tagList.map((e, index) => `$${index + 1}`).join('), (');
+  const selectValues = tagList.map((e, index) => `$${index + 1}`).join(', ');
 
   try {
     await client.query(
@@ -274,8 +274,8 @@ async function getPostById(postId) {
 
     if (!post) {
       throw {
-        name: "PostNotFoundError",
-        message: "Could not find a post with that postId",
+        name: 'PostNotFoundError',
+        message: 'Could not find a post with that postId',
       };
     }
 

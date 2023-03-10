@@ -8,7 +8,7 @@ const {
   updateUser,
   getUserById,
 } = require('../db');
-const {requireUser, requireActiveUser } = require('./utils');
+const { requireUser, requireActiveUser } = require('./utils');
 
 usersRouter.use((req, res, next) => {
   console.log('A request is being made to /users');
@@ -36,7 +36,7 @@ usersRouter.post('/login', async (req, res, next) => {
 
   try {
     const user = await getUserByUsername(username);
-    
+
     if (user && user.password == password) {
       const token = jwt.sign(
         {
@@ -98,42 +98,47 @@ usersRouter.post('/register', async (req, res, next) => {
   }
 });
 
-usersRouter.delete('/:userId', requireUser, requireActiveUser, async (req, res, next) => {
-  const { userId } =req.params;
+usersRouter.delete(
+  '/:userId',
+  requireUser,
+  requireActiveUser,
+  async (req, res, next) => {
+    const { userId } = req.params;
 
+    try {
+      if (req.user === undefined) {
+        next({
+          name: 'InvalidUserLoginDelete',
+          message: 'Login to delete.',
+        });
+      }
 
-  try {
-    if (req.user === undefined) {
+      const user = await getUserById(userId);
+
+      if (user && user.id === req.user.id) {
+        const updatedUser = await updateUser(userId, { active: false });
+
+        res.send({ user: updatedUser });
+      } else {
+        next(
+          user
+            ? {
+                name: 'InvalidUserDelete',
+                message: 'Cannot delete another user.',
+              }
+            : {
+                name: 'UserNotFound',
+                message: "User doesn't exist.",
+              }
+        );
+      }
+    } catch ({ name, message }) {
       next({
-        name: "InvalidUserLoginDelete",
-        message: "Login to delete."
-      })
+        name,
+        message,
+      });
     }
-  
-    const user = await getUserById(userId);
-
-    if (user && user.id === req.user.id) {
-      const updatedUser = await updateUser(userId, {active: false});
-
-      res.send({user: updatedUser});
-    } else {
-      next(
-        user
-        ? {
-          name: "InvalidUserDelete",
-          message: "Cannot delete another user."
-        }
-        : {
-          name: "UserNotFound",
-          message: "User doesn't exist."        
-        }
-      )
-    }
-  } catch ({name, message}) {
-    next({
-      name, message
-    });
   }
-});
+);
 
 module.exports = usersRouter;
