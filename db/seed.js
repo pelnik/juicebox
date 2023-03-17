@@ -220,12 +220,7 @@ async function testDB() {
   } catch (error) {
     console.error('Error testing database!');
     throw error;
-  } finally {
-    client.end();
   }
 }
 
-rebuildDB()
-  .then(testDB)
-  .catch(console.error)
-  .finally(() => client.end());
+rebuildDB().then(testDB).catch(console.error);
