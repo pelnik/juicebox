@@ -1,13 +1,20 @@
 require('dotenv').config();
 
-const { Client } = require('pg');
+const { Pool } = require('pg');
 const { DATABASE_URL } = process.env;
 console.log(DATABASE_URL, 'DATABASE_URL');
-const client = new Client({
+let client = new Pool({
   connectionString: DATABASE_URL,
   idleTimeoutMillis: 30000,
 });
 // const client = new Client('postgres://localhost:5432/juicebox-dev');
+
+client.on('error', () => {
+  client = new Pool({
+    connectionString: DATABASE_URL,
+    idleTimeoutMillis: 30000,
+  });
+});
 
 async function getAllUsers() {
   const { rows } = await client.query(

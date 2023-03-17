@@ -15,8 +15,6 @@ app.use(cors());
 
 app.use('/api', apiRouter);
 
-client.connect().catch((err) => console.error('connection error', err));
-
 app.listen(PORT, () => {
   console.log('the server is up on port', PORT);
 });
